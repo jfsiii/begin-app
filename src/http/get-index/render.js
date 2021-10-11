@@ -4,6 +4,30 @@
  * @typedef {string} SVG
  */
 
+/**
+ * @param {{count: number}} options
+ * @returns {HTML}
+ */
+ module.exports = function render({count}) {
+
+  const pageContent = `
+  <div class="margin-bottom-16">
+    <h1 class="margin-bottom-16">Hello from Node.js!</h1>
+    <p class="margin-bottom-8">${ renderCount({ count }) }</p>
+  </div>
+  <div>
+    <p class="margin-bottom-8">
+      View documentation at:
+    </p>
+    <code>
+      <a class="color-grey color-black-link" href="https://arc.codes">https://arc.codes</a>
+    </code>
+  </div>
+  `;
+
+  return renderLayout({ content: pageContent });
+}
+
 /** @type {CSS} */
 const css = `
 * {
@@ -60,6 +84,7 @@ const svgLogo = `
  */
 function renderCount({count}) {
   return `
+    <small>Does <code>req.session.count</code> survive restarts?</small>
     <form method=post action=/count>
       <button>Count ${count}</button>
     </form>
@@ -87,27 +112,4 @@ function renderLayout({ content }) {
     </body>
   </html>
   `;
-}
-/**
- * @param {{count: number}} options
- * @returns {HTML}
- */
-module.exports = function render({count}) {
-
-  const pageContent = `
-  <div class="margin-bottom-16">
-    <h1 class="margin-bottom-16">Hello from Node.js!</h1>
-    <p class="margin-bottom-8">${ renderCount({ count }) }</p>
-  </div>
-  <div>
-    <p class="margin-bottom-8">
-      View documentation at:
-    </p>
-    <code>
-      <a class="color-grey color-black-link" href="https://arc.codes">https://arc.codes</a>
-    </code>
-  </div>
-  `;
-
-  return renderLayout({ content: pageContent });
 }
