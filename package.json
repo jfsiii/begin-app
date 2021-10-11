@@ -6,6 +6,20 @@
     "start": "npx sandbox"
   },
   "devDependencies": {
+    "@architect/architect": "^9.1.0",
     "@architect/sandbox": "^4.0"
-  }
+  },
+  "main": "index.js",
+  "dependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jfsiii/begin-app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jfsiii/begin-app/issues"
+  },
+  "homepage": "https://github.com/jfsiii/begin-app#readme"
 }
