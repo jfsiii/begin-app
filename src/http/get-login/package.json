@@ -1,0 +1,16 @@
+{
+  "name": "get-login",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@architect/functions": "^4.0.0",
+    "tiny-json-http": "^7.3.0"
+  }
+}

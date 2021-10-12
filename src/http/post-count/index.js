@@ -1,9 +1,15 @@
 let arc = require('@architect/functions')
 
 async function counter(req) {
-  let count = (req.session.count || 0) + 1
+  const start = req.session.count || 0;
+  const delta = parseInt(req.query.delta, 10) ?? 0;
+  const count = start + delta;
+
   return {
-    session: { count },
+    session: {
+      ...req.session,
+      count
+    },
     location: '/'
   }
 }

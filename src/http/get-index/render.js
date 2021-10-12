@@ -1,28 +1,45 @@
+const arc = require('@architect/functions')
+
 /**
  * @typedef {string} HTML
  * @typedef {string} CSS
  * @typedef {string} SVG
+ *
+ * @typedef {{
+      token: string,
+      name: string,
+      login: string,
+      id: string,
+      url: string,
+      avatar: string
+    }} Account
+ * @typedef {{ account?: Account, href: string}} Auth
  */
 
 /**
- * @param {{count: number}} options
- * @returns {HTML}
+ * @param {{
+ *  count: number,
+ *  account: Account,
+ *  oAuthUrl: string
+ * }} options
+ * @returns {Promise<HTML>}
  */
- module.exports = function render({count}) {
-
+ module.exports = async function render({count, account, oAuthUrl}) {
   const pageContent = `
   <div class="margin-bottom-16">
     <h1 class="margin-bottom-16">Hello from Node.js!</h1>
-    <p class="margin-bottom-8">${ renderCount({ count }) }</p>
+    ${
+      account
+        ? [Avatar(account.avatar), UserCard(account)].join("")
+        : Login(oAuthUrl)
+    }
   </div>
-  <div>
-    <p class="margin-bottom-8">
-      View documentation at:
-    </p>
-    <code>
-      <a class="color-grey color-black-link" href="https://arc.codes">https://arc.codes</a>
-    </code>
-  </div>
+  <p class="margin-bottom-8">
+    ${ renderCount({ count }) }
+  </p>
+  <p class="margin-bottom-8">
+    <small><code>req.session</code> survives restarts</small>
+  </p>
   `;
 
   return renderLayout({ content: pageContent });
@@ -30,34 +47,17 @@
 
 /** @type {CSS} */
 const css = `
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
 body {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
 }
-.max-width-320 {
-  max-width: 20rem;
+button[type=button] > a {
+  text-decoration: none;
 }
-.margin-left-8 {
-  margin-left: 0.5rem;
+form {
+  display: inline-block;
 }
-.margin-bottom-16 {
-  margin-bottom: 1rem;
-}
-.margin-bottom-8 {
-  margin-bottom: 0.5rem;
-}
-.padding-32 {
-  padding: 2rem;
-}
-.color-grey {
-  color: #333;
-}
-.color-black-link:hover {
-  color: black;
+img.avatar {
+  width: 33%;
 }
 `;
 
@@ -84,15 +84,21 @@ const svgLogo = `
  */
 function renderCount({count}) {
   return `
-    <small>Does <code>req.session.count</code> survive restarts?</small>
-    <form method=post action=/count>
-      <button>Count ${count}</button>
-    </form>
-    <form method=post action=/reset>
-      <button>Reset</button>
-    </form>
+    <div>
+      Count is ${count}
+      <form method=post action=/count?delta=1>
+        <button>+</button>
+      </form>
+      <form method=post action=/count?delta=-1>
+        <button>-</button>
+      </form>
+      <form method=post action=/reset>
+        <button>Reset</button>
+      </form>
+    </div>
   `;
 }
+
 
 /**
  *
@@ -100,8 +106,7 @@ function renderCount({count}) {
  * @returns {HTML}
  */
 function renderLayout({ content }) {
-  return `
-  <!DOCTYPE html>
+  return `<!DOCTYPE html>
   <html lang="en">
     ${ head }
     <body class="padding-32">
@@ -110,6 +115,34 @@ function renderLayout({ content }) {
         <div class="margin-left-8">${ content }</div>
       </div>
     </body>
-  </html>
+  </html>`;
+}
+
+/** @param {Account} account */
+function UserCard(account) {
+  const {name, login: username} = account
+
+  return `
+<div>
+  ${ name } (${ username }) ${ Logout() }
+</div>
   `;
+}
+
+function Avatar(src) {
+  return `<img class="avatar" src="${src}" alt="User's avatar">`;
+}
+
+function Login(href) {
+  return `
+  <button type=button><a href=${href} alt="Login">Login</a></button>
+  `;
+}
+
+function Logout() {
+  return `
+<form method=POST action=/logout>
+  <button>Logout</button>
+</form>
+  `
 }
